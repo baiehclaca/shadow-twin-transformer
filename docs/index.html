@@ -5,180 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shadow Twin Transformer</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">ST</a>
-            <ul class="nav-links">
-                <li><a href="#concept">Concept</a></li>
-                <li><a href="#architecture">Architecture</a></li>
-                <li><a href="docs.html">Docs</a></li>
-                <li><a href="#cta" class="nav-cta">Get Started</a></li>
-            </ul>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="title">Shadow Twin Transformer</h1>
+            <p class="tagline">Dual-stream reasoning architecture</p>
         </div>
-    </nav>
+        <nav class="nav">
+            <a href="#concept" class="nav-link">Concept</a>
+            <a href="#architecture" class="nav-link">Architecture</a>
+            <a href="https://github.com/baiehclaca/shadow-twin-transformer" class="nav-link nav-link-external" target="_blank">GitHub</a>
+        </nav>
+    </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Shadow Twin Transformer</h1>
-            <p class="subtitle">Dual-stream architecture for reasoning, self-correction, and confidence-aware generation</p>
-            
-            <div class="twin-visualization">
-                <div class="stream text-stream">
-                    <div class="stream-label">Text Stream</div>
-                    <div class="stream-nodes">
-                        <div class="node"></div>
-                        <div class="node"></div>
-                        <div class="node"></div>
-                    </div>
-                </div>
-                
-                <div class="connection"></div>
-                
-                <div class="stream shadow-stream">
-                    <div class="stream-label">Shadow Stream</div>
-                    <div class="stream-nodes">
-                        <div class="node"></div>
-                        <div class="node"></div>
-                        <div class="node"></div>
-                    </div>
-                </div>
+    <main>
+        <section class="section hero">
+            <div class="hero-left">
+                <h2>Text Stream</h2>
+                <p>Primary processing path for token generation and reasoning.</p>
             </div>
-
-            <div class="cta-buttons">
-                <a href="https://github.com/baiehclaca/shadow-twin-transformer" class="btn btn-primary" target="_blank">View on GitHub</a>
-                <a href="https://github.com/baiehclaca/shadow-twin-transformer/raw/main/shadow_twin_transformer_v4_math_structured.pdf" class="btn btn-secondary" target="_blank">Read Whitepaper</a>
+            <div class="hero-divider"></div>
+            <div class="hero-right">
+                <h2>Shadow Stream</h2>
+                <p>Parallel verification path for self-correction and confidence scoring.</p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="concept" class="concept">
-        <div class="container">
-            <h2>The Core Concept</h2>
-            <p class="intro-text">Shadow Twin extends the standard transformer with parallel processing streams that work together with external memory, enabling more robust reasoning and interpretable predictions.</p>
-            
-            <div class="concept-grid">
-                <div class="concept-card">
-                    <h3>Dual Streams</h3>
-                    <p>Text and shadow streams evolve in tandem, each processing information while exchanging insights. The shadow stream provides internal reflection and self-checking.</p>
-                </div>
-                <div class="concept-card">
-                    <h3>External Memory</h3>
-                    <p>Persistent memory buffer stores representations and context throughout generation, enabling the model to retrieve and reason over historical states with temporal awareness.</p>
-                </div>
-                <div class="concept-card">
-                    <h3>Confidence-Aware</h3>
-                    <p>Output generation produces both predictions and confidence scores. When streams diverge, the model expresses uncertainty and provides alternative hypotheses.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section id="concept" class="section">
+            <h2 class="section-title">Concept</h2>
+            <p class="section-text">
+                Shadow Twin Transformer introduces a dual-stream architecture that enables language models to reason, verify, and self-correct simultaneously. Two coupled processing streams work in parallel: the primary stream generates content while the shadow stream validates reasoning and provides confidence signals.
+            </p>
+            <p class="section-text">
+                This architectural innovation allows models to achieve higher accuracy through built-in verification mechanisms, without requiring external orchestration or multiple forward passes.
+            </p>
+        </section>
 
-    <section id="architecture" class="architecture">
-        <div class="container">
-            <h2>Architecture Overview</h2>
-            
-            <div class="flow-diagram">
-                <div class="flow-step">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Token Embedding</div>
-                    <div class="step-desc">Input tokens embedded and positionally encoded</div>
+        <section id="architecture" class="section">
+            <h2 class="section-title">Architecture</h2>
+            <div class="architecture">
+                <div class="arch-element">
+                    <h3>Coupled Processing</h3>
+                    <p>Text and shadow streams share transformer weights but operate on distinct reasoning paths, creating interference patterns that enhance correctness.</p>
                 </div>
-                
-                <div class="flow-arrow">↓</div>
-                
-                <div class="flow-step">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Coupled Streams</div>
-                    <div class="step-desc">Text and shadow streams initialized identically</div>
+                <div class="arch-element">
+                    <h3>Confidence Awareness</h3>
+                    <p>The shadow stream generates confidence scores for each decision, enabling the model to flag uncertain outputs and trigger re-evaluation.</p>
                 </div>
-                
-                <div class="flow-arrow">↓</div>
-                
-                <div class="flow-step">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Mutual Information</div>
-                    <div class="step-desc">Streams exchange informing messages each layer</div>
-                </div>
-                
-                <div class="flow-arrow">↓</div>
-                
-                <div class="flow-step">
-                    <div class="step-number">4</div>
-                    <div class="step-title">Memory Integration</div>
-                    <div class="step-desc">Shadow stream retrieves and fuses external memory</div>
-                </div>
-                
-                <div class="flow-arrow">↓</div>
-                
-                <div class="flow-step">
-                    <div class="step-number">5</div>
-                    <div class="step-title">Fusion Output</div>
-                    <div class="step-desc">Confidence-weighted combination of stream predictions</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="cta" class="features">
-        <div class="container">
-            <h2>Why Shadow Twin?</h2>
-            
-            <div class="features-grid">
-                <div class="feature">
-                    <div class="feature-icon">✓</div>
+                <div class="arch-element">
                     <h3>Self-Correction</h3>
-                    <p>Shadow stream catches inconsistencies and enables internal validation</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">✓</div>
-                    <h3>Interpretability</h3>
-                    <p>Dual representations provide insight into model reasoning processes</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">✓</div>
-                    <h3>Robustness</h3>
-                    <p>Confidence signals enable models to express and manage uncertainty</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">✓</div>
-                    <h3>Memory Integration</h3>
-                    <p>Extended reasoning with temporal awareness over long contexts</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">✓</div>
-                    <h3>Accuracy</h3>
-                    <p>Coupled streams provide redundancy and cross-validation</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">✓</div>
-                    <h3>Mathematical Rigor</h3>
-                    <p>Exhaustive formal specification with complete mathematical foundations</p>
+                    <p>When confidence drops below threshold, the architecture triggers an internal correction loop without requiring external intervention.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="cta-section">
-        <div class="container">
-            <h2>Ready to Explore?</h2>
-            <p>Dive into the complete mathematical specification and architecture details.</p>
-            <div class="cta-buttons">
-                <a href="docs.html" class="btn btn-primary">Read Documentation</a>
-                <a href="https://github.com/baiehclaca/shadow-twin-transformer" class="btn btn-secondary" target="_blank">GitHub Repository</a>
-            </div>
-        </div>
-    </section>
+        <section class="section footer-section">
+            <p class="footer-text">Shadow Twin Transformer is a novel approach to transformer architecture that enables enhanced reasoning through dual coupled processing streams.</p>
+            <a href="https://github.com/baiehclaca/shadow-twin-transformer" class="cta">View on GitHub →</a>
+        </section>
+    </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 Shadow Twin Transformer. Research by Teodor Walter Vido.</p>
-            <div class="footer-links">
-                <a href="https://github.com/baiehclaca/shadow-twin-transformer" target="_blank">GitHub</a>
-                <a href="https://github.com/baiehclaca/shadow-twin-transformer/raw/main/shadow_twin_transformer_v4_math_structured.pdf" target="_blank">Whitepaper PDF</a>
-            </div>
-        </div>
+    <footer class="footer">
+        <p>&copy; 2026</p>
     </footer>
 </body>
 </html>
