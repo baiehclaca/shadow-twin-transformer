@@ -1,76 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shadow Twin Transformer</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shadow Twin Transformer</title>
+  <meta name="description" content="Dual-stream transformer architecture for enhanced reasoning, self-correction, and confidence-aware generation.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:  #000;
+      --dim:  #555;
+      --pale: #999;
+      --rule: #e8e8e8;
+      --code: #f5f5f5;
+      --max:  640px;
+      --mono: 'SFMono-Regular', 'Fira Mono', 'Consolas', 'Menlo', monospace;
+      --sans: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ink:  #f5f5f5;
+        --dim:  #aaa;
+        --pale: #666;
+        --rule: #222;
+        --code: #1a1a1a;
+      }
+      body { background: #0f0f0f; }
+    }
+
+    html { font-size: 13px; }
+
+    body {
+      background: #fff;
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.65;
+      padding: 0 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .logotype {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .headline {
+      margin-top: 28px;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: -.01em;
+      color: var(--ink);
+    }
+
+    .sub {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--dim);
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .cta {
+      margin-top: 28px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .cta a {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 1px;
+    }
+
+    .cta a.secondary {
+      color: var(--dim);
+      border-color: var(--dim);
+      font-weight: 400;
+    }
+
+    .cta a:hover { opacity: .6; }
+
+    section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    .label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--pale);
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    p {
+      font-size: 13px;
+      color: var(--dim);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 13px;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    .steps li:last-child { border-bottom: none; }
+
+    .steps li::before {
+      content: counter(step);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--pale);
+      letter-spacing: .04em;
+      min-width: 14px;
+      padding-top: 2px;
+    }
+
+    .steps li strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink);
+    }
+
+    p code {
+      background: var(--code);
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+
+    .features {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .features li {
+      display: flex;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 13px;
+      color: var(--dim);
+      line-height: 1.6;
+    }
+
+    .features li:last-child { border-bottom: none; }
+
+    .features li::before {
+      content: '▪';
+      color: var(--pale);
+      min-width: 14px;
+    }
+
+    .features li strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .architecture {
+      display: flex;
+      gap: 40px;
+      margin: 20px 0 0;
+    }
+
+    .stream {
+      flex: 1;
+    }
+
+    .stream h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    .stream p {
+      font-size: 13px;
+      color: var(--dim);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    footer {
+      padding: 40px 0 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer span, footer a {
+      font-size: 11px;
+      color: var(--pale);
+      text-decoration: none;
+      letter-spacing: .02em;
+    }
+
+    footer a:hover { color: var(--ink); }
+
+    @media (max-width: 480px) {
+      header { padding: 56px 0 48px; }
+      .headline { font-size: 18px; }
+      .architecture { flex-direction: column; gap: 20px; }
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <h1 class="title">Shadow Twin Transformer</h1>
-            <p class="tagline">Dual-stream reasoning architecture</p>
-        </div>
-        <nav class="nav">
-            <a href="#concept" class="nav-link">Concept</a>
-            <a href="#architecture" class="nav-link">Architecture</a>
-            <a href="https://github.com/baiehclaca/shadow-twin-transformer" class="nav-link nav-link-external" target="_blank">GitHub</a>
-        </nav>
-    </header>
+<div class="wrap">
 
-    <main>
-        <section class="section hero">
-            <div class="hero-left">
-                <h2>Text Stream</h2>
-                <p>Primary processing path for token generation and reasoning.</p>
-            </div>
-            <div class="hero-divider"></div>
-            <div class="hero-right">
-                <h2>Shadow Stream</h2>
-                <p>Parallel verification path for self-correction and confidence scoring.</p>
-            </div>
-        </section>
+  <header>
+    <div class="logotype">Shadow Twin Transformer</div>
+    <h1 class="headline">Dual-stream reasoning architecture.</h1>
+    <p class="sub">
+      Two coupled processing streams work in parallel: the primary stream generates reasoning and content,
+      while the shadow stream validates, self-corrects, and provides confidence signals.
+      No external orchestration. Built-in verification.
+    </p>
+    <div class="cta">
+      <a href="https://github.com/baiehclaca/shadow-twin-transformer">GitHub</a>
+      <a href="#how" class="secondary">How it works</a>
+    </div>
+  </header>
 
-        <section id="concept" class="section">
-            <h2 class="section-title">Concept</h2>
-            <p class="section-text">
-                Shadow Twin Transformer introduces a dual-stream architecture that enables language models to reason, verify, and self-correct simultaneously. Two coupled processing streams work in parallel: the primary stream generates content while the shadow stream validates reasoning and provides confidence signals.
-            </p>
-            <p class="section-text">
-                This architectural innovation allows models to achieve higher accuracy through built-in verification mechanisms, without requiring external orchestration or multiple forward passes.
-            </p>
-        </section>
+  <section id="how">
+    <div class="label">How it works</div>
+    <ol class="steps">
+      <li><strong>Text Stream</strong> — primary transformer processes input and generates tokens</li>
+      <li><strong>Shadow Stream</strong> — parallel processing path evaluates reasoning quality</li>
+      <li><strong>Confidence Scoring</strong> — shadow stream outputs confidence metrics for each decision</li>
+      <li><strong>Verification Gate</strong> — decisions below confidence threshold trigger re-evaluation</li>
+      <li><strong>Self-Correction</strong> — text stream adjusts output based on shadow feedback, no external call needed</li>
+      <li><strong>Coupled Output</strong> — final result includes both content and confidence metadata</li>
+    </ol>
+  </section>
 
-        <section id="architecture" class="section">
-            <h2 class="section-title">Architecture</h2>
-            <div class="architecture">
-                <div class="arch-element">
-                    <h3>Coupled Processing</h3>
-                    <p>Text and shadow streams share transformer weights but operate on distinct reasoning paths, creating interference patterns that enhance correctness.</p>
-                </div>
-                <div class="arch-element">
-                    <h3>Confidence Awareness</h3>
-                    <p>The shadow stream generates confidence scores for each decision, enabling the model to flag uncertain outputs and trigger re-evaluation.</p>
-                </div>
-                <div class="arch-element">
-                    <h3>Self-Correction</h3>
-                    <p>When confidence drops below threshold, the architecture triggers an internal correction loop without requiring external intervention.</p>
-                </div>
-            </div>
-        </section>
+  <section>
+    <div class="label">Architecture</div>
 
-        <section class="section footer-section">
-            <p class="footer-text">Shadow Twin Transformer is a novel approach to transformer architecture that enables enhanced reasoning through dual coupled processing streams.</p>
-            <a href="https://github.com/baiehclaca/shadow-twin-transformer" class="cta">View on GitHub →</a>
-        </section>
-    </main>
+    <h2>Dual streams</h2>
+    <p>The twin architecture operates on shared transformer weights but independent reasoning paths. Coupled processing creates interference patterns that enhance correctness without requiring separate models.</p>
 
-    <footer class="footer">
-        <p>&copy; 2026</p>
-    </footer>
+    <div class="architecture" style="margin-top: 20px;">
+      <div class="stream">
+        <h3>Text Stream</h3>
+        <p>Generates natural language output, token sequences, and reasoning traces. Receives confidence feedback from shadow stream and adjusts next token distribution accordingly.</p>
+      </div>
+      <div class="stream">
+        <h3>Shadow Stream</h3>
+        <p>Parallel verification path. Evaluates semantic coherence, logical consistency, and factual alignment. Outputs per-token confidence scores and correction signals.</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 28px;">Core features</h2>
+    <ul class="features">
+      <li><strong>Self-correction</strong> — built-in, no external verifier needed</li>
+      <li><strong>Confidence awareness</strong> — every output tagged with certainty metrics</li>
+      <li><strong>Unified architecture</strong> — single model, two reasoning paths</li>
+      <li><strong>Scalable verification</strong> — shadow stream runs at model inference speed</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="label">Design principles</div>
+
+    <h2>Coupled, not separate</h2>
+    <p>Unlike ensembles, shadow twin streams share weights and parameters. The coupling itself is the mechanism—interference patterns between streams improve reasoning quality.</p>
+
+    <h2 style="margin-top: 20px;">Inference-time verification</h2>
+    <p>No need for post-hoc checking or external models. Confidence scoring happens during generation, enabling real-time self-correction.</p>
+
+    <h2 style="margin-top: 20px;">Emergent properties</h2>
+    <p>The architecture enables the model to develop meta-reasoning abilities—understanding its own uncertainty and correcting course mid-generation.</p>
+  </section>
+
+  <footer>
+    <span>Shadow Twin Transformer</span>
+    <div style="display:flex;gap:20px">
+      <a href="https://github.com/baiehclaca/shadow-twin-transformer">GitHub</a>
+      <a href="https://github.com/baiehclaca/shadow-twin-transformer/blob/main/README.md">Docs</a>
+    </div>
+  </footer>
+
+</div>
 </body>
 </html>
